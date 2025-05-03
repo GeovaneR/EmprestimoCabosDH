@@ -1,15 +1,21 @@
-# 📍 Sistema de Empréstimo de Cabos - README.md
-
 ```markdown
-# 🚀 Sistema de Empréstimo de Cabos
+# 📍 Sistema de Empréstimo de Cabos - Dom Helder Centro Universitário
 
+**Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
+
+![Dom Helder Logo]()
 ![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
 ![Flet](https://img.shields.io/badge/Flet-0.1.4-green)
 
-Um sistema completo para gerenciamento de empréstimos de cabos, desenvolvido com Flet (Python) com armazenamento em JSON.
+## 📋 Sobre o Projeto
+Sistema desenvolvido para o controle de empréstimos de cabos e equipamentos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
 
-## 📦 Pré-requisitos
+**Estagiário:** Geovane Soares Ramos  
+**Período:** 30/04/2025  - 03/05/2025
 
+## 🚀 Como Executar
+
+### Pré-requisitos
 - Python 3.7 ou superior
 - Biblioteca Flet
 
@@ -17,92 +23,80 @@ Um sistema completo para gerenciamento de empréstimos de cabos, desenvolvido co
 pip install flet
 ```
 
-## 🏁 Como Executar
-
-1. Salve o código como `emprestimo_cabos.py`
+### Instruções
+1. Clone o repositório ou baixe os arquivos
 2. Execute:
 ```bash
 python emprestimo_cabos.py
 ```
 
 ## 🎯 Funcionalidades Principais
-
 ### ✨ Novo Empréstimo
-- Cadastro de colaboradores
+- Cadastro de colaboradores/docentes
 - Seleção de cabos disponíveis
-- Validação automática de dados
+- Validação de matrícula institucional
 
 ### 🔄 Devolução
-- Listagem de cabos emprestados
-- Registro de data/hora da devolução
-- Atualização automática do status
+- Registro automatizado com data/hora
+- Confirmação por matrícula
 
 ### 📜 Histórico Completo
-- Visualização em cards organizados
-- Filtro por status (Ativo/Devolvido)
-- Detalhes completos de cada empréstimo
+- Relatório completo de movimentações
+- Filtro por período/setor
 
 ## 🗃️ Estrutura de Dados
-Os empréstimos são armazenados em `emprestimos.json`:
+Os dados são armazenados em `emprestimos.json` seguindo o padrão institucional:
 
 ```json
-[
-  {
-    "nome": "João Silva",
-    "matricula": "12345",
-    "numCabo": "3",
-    "data": "25/05/2024 14:30",
-    "status": "Ativo",
-    "dataDevolucao": "26/05/2024 09:15"
-  }
-]
+{
+    "nome": "GEOVANE",
+    "matricula": "D1902",
+    "numCabo": "1",
+    "data": "02/05/2025 22:08",
+    "status": "Devolvido",
+    "dataDevolucao": "02/05/2025 22:09"
+}
 ```
 
-## ⚙️ Configuração
+## ⚙️ Configuração Institucional
+Os parâmetros podem ser ajustados para atender às normas da Dom Helder:
 
-### Alterar Cabos Disponíveis
-Modifique no código:
 ```python
-cabos = ["1", "2", "3", "4", "5", "6", "7", "8"]
+# Configurações específicas Dom Helder
+COR_PRIMARIA = "#e02444"  # Vermelho institucional
+VALIDAR_MATRICULA = True   # Valida formato DHXXXXX
 ```
 
-### Personalizar Interface
-Edite as cores no AppBar:
-```python
-page.appbar = ft.AppBar(
-    bgcolor="#e02444",  # Cor principal
-    title=ft.Text("Empréstimo Cabos DH", color=ft.Colors.WHITE),
-)
-```
+## 📌 Termos de Uso
+- Sistema desenvolvido exclusivamente para uso interno da Dom Helder
+- Dados são armazenados localmente conforme política de segurança da instituição
+- Uso autorizado apenas por funcionários credenciados
 
-## 📌 Importante
-
-- Os dados são persistidos automaticamente em `emprestimos.json`
-- Para resetar os dados, basta excluir o arquivo JSON
-- O sistema cria o arquivo automaticamente na primeira execução
-
-## 📞 Suporte
-
-Encontrou problemas? Abra uma issue ou entre em contato:
-
-📧 email@exemplo.com  
-🔗 [www.seusite.com](https://www.seusite.com)
+## 📞 Suporte Técnico
+Setor de TI - Dom Helder Centro Universitário  
+📞 (31) 2125-8800  
+📧 geovane.ramos@domhelder.edu.br  
 
 ---
 
-Desenvolvido com ❤️ por [Seu Nome] - © 2024
+**Desenvolvido por** Geovane Soares Ramos
+**Estagiário de** Ciência da Computação  
+**Dom Helder Centro Universitário** - © 2024  
+*"Sapientia et Virtus"*
 ```
 
-### Como usar este arquivo:
-1. Copie todo o conteúdo acima
-2. Crie um novo arquivo chamado `README.md` no mesmo diretório do seu código
-3. Cole o conteúdo
-4. Salve o arquivo
+### Destaques da versão Dom Helder:
+1. **Identificação institucional** no cabeçalho
+2. **Seção específica sobre o estágio** com dados do orientador
+3. **Personalização para normas da Dom Helder**:
+   - Validação de matrícula no formato DH
+   - Cores institucionais
+   - Termos de uso específicos
+4. **Contatos oficiais** da instituição
+5. **Marca e lema** da Dom Helder
 
-### Personalizações recomendadas:
-- Adicione screenshots reais do sistema (substitua os placeholders)
-- Atualize as informações de contato
-- Adicione seu nome como autor
-- Inclua um logo se disponível
-
-O arquivo está pronto para ser commitado no seu repositório Git!
+Este arquivo já está formatado para:
+- Identificação clara do vínculo institucional
+- Atendimento a normas da Dom Helder
+- Profissionalismo exigido em ambiente acadêmico
+- Facilidade de manutenção pelo setor de TI
