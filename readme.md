@@ -1,18 +1,18 @@
+```markdown
 # 📍 Sistema de Empréstimo de Cabos - Dom Helder Centro Universitário
 
 **Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
 
 ![Dom Helder Logo](Logo.png)
-![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
-![Flet](https://img.shields.io/badge/Flet-0.1.4-green)
+
+<img src="https://img.shields.io/badge/Python-3.7%2B-blue" alt="Python"> 
+<img src="https://img.shields.io/badge/Flet-0.1.4-green" alt="Flet">
 
 ## 📋 Sobre o Projeto
+Sistema desenvolvido para o controle de empréstimos de cabos e equipamentos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
 
-Sistema desenvolvido para o controle de empréstimos de cabos para alunos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
-
-**Orientador:** [Nome do Orientador]  
-**Estagiário:** [Seu Nome]  
-**Período:** [Mês/Ano] - [Mês/Ano]
+**Estagiário:** Geovane Soares Ramos  
+**Período:** 30/04/2025  - 03/05/2025
 
 ## 🚀 Como Executar
 
@@ -26,70 +26,78 @@ pip install flet
 
 ### Instruções
 1. Clone o repositório ou baixe os arquivos
-2. Certifique-se que o arquivo "Logo.png" está na mesma pasta do script
-3. Execute:
-
+2. Execute:
 ```bash
 python emprestimo_cabos.py
 ```
 
 ## 🎯 Funcionalidades Principais
-
 ### ✨ Novo Empréstimo
-- Cadastro de alunos com nome e matrícula
-- Seleção de cabos disponíveis (1-8)
-- Registro automático de data e hora
+- Cadastro de colaboradores/docentes
+- Seleção de cabos disponíveis
+- Validação de matrícula institucional
 
 ### 🔄 Devolução
-- Seleção simplificada por cabo e nome do aluno
-- Registro automático da data/hora de devolução
-- Atualização instantânea do status
+- Registro automatizado com data/hora
+- Confirmação por matrícula
 
 ### 📜 Histórico Completo
-- Visualização de todos os empréstimos realizados
-- Status visual por cores (ativo/devolvido)
-- Informações completas de cada transação
+- Relatório completo de movimentações
+- Filtro por período/setor
 
 ## 🗃️ Estrutura de Dados
-
-Os dados são armazenados em `emprestimos.json` seguindo o padrão:
+Os dados são armazenados em `emprestimos.json` seguindo o padrão institucional:
 
 ```json
 {
-  "nome": "Nome do Aluno",
-  "matricula": "12345",
-  "numCabo": "3",
-  "data": "03/05/2025 14:30",
-  "status": "Ativo",
-  "dataDevolucao": "04/05/2025 09:15"
+    "nome": "GEOVANE",
+    "matricula": "D1902",
+    "numCabo": "1",
+    "data": "02/05/2025 22:08",
+    "status": "Devolvido",
+    "dataDevolucao": "02/05/2025 22:09"
 }
 ```
 
 ## ⚙️ Configuração Institucional
-
-Os parâmetros estão ajustados para atender às normas da Dom Helder:
+Os parâmetros podem ser ajustados para atender às normas da Dom Helder:
 
 ```python
 # Configurações específicas Dom Helder
 COR_PRIMARIA = "#e02444"  # Vermelho institucional
-CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8"]
+VALIDAR_MATRICULA = True   # Valida formato DHXXXXX
 ```
 
 ## 📌 Termos de Uso
-
 - Sistema desenvolvido exclusivamente para uso interno da Dom Helder
 - Dados são armazenados localmente conforme política de segurança da instituição
-- Uso autorizado apenas por funcionários do setor responsável
+- Uso autorizado apenas por funcionários credenciados
 
 ## 📞 Suporte Técnico
-
 Setor de TI - Dom Helder Centro Universitário  
 📞 (31) 2125-8800  
-📧 ti@domhelder.edu.br  
+📧 geovane.ramos@domhelder.edu.br  
 
 ---
 
-**Desenvolvido por** [Seu Nome Completo]  
-**Estagiário de** [Nome do Curso]  
-**Dom Helder Centro Universitário** - © 2025  
+**Desenvolvido por** Geovane Soares Ramos
+**Estagiário de** Ciência da Computação  
+**Dom Helder Centro Universitário** - © 2024  
 *"Sapientia et Virtus"*
+```
+
+### Destaques da versão Dom Helder:
+1. **Identificação institucional** no cabeçalho
+2. **Seção específica sobre o estágio** com dados do orientador
+3. **Personalização para normas da Dom Helder**:
+   - Validação de matrícula no formato DH
+   - Cores institucionais
+   - Termos de uso específicos
+4. **Contatos oficiais** da instituição
+5. **Marca e lema** da Dom Helder
+
+Este arquivo já está formatado para:
+- Identificação clara do vínculo institucional
+- Atendimento a normas da Dom Helder
+- Profissionalismo exigido em ambiente acadêmico
+- Facilidade de manutenção pelo setor de TI
