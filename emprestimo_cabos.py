@@ -3,25 +3,23 @@ from flet import *
 from datetime import datetime
 import json
 import os
+import re 
 
 JSON_FILE = "emprestimos.json"
 
 def main(page: ft.Page):
     page.title = "Empréstimo de Cabos"
 
-    # Carrega os empréstimos do arquivo JSON ao iniciar
     def load_emprestimos():
         if os.path.exists(JSON_FILE):
             with open(JSON_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
         return []
 
-    # Salva os empréstimos no arquivo JSON
     def save_emprestimos():
         with open(JSON_FILE, 'w', encoding='utf-8') as f:
             json.dump(emprestimos, f, ensure_ascii=False, indent=4)
 
-    # Inicializa a lista de empréstimos carregando do arquivo
     emprestimos = load_emprestimos()
     cabos = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
@@ -39,21 +37,55 @@ def main(page: ft.Page):
         nome = ft.TextField(
             label="Nome",
             width=400
-            )
+        )
+        
+        def validar_matricula(e):
+            # Permite apagar (backspace)
+            if e.control.value == "":
+                e.control.error_text = None
+                e.control.update()
+                return
+            
+            # Converte a primeira letra para minúscula
+            if len(e.control.value) > 0 and e.control.value[0].isalpha():
+                current_value = e.control.value
+                new_value = current_value[0].lower() + current_value[1:]
+                if new_value != current_value:
+                    e.control.value = new_value
+            
+            # Valida o formato
+            matricula = e.control.value
+            padrao = re.compile(r'^[ed]\d{0,5}$')  # Permite digitação parcial
+            
+            if not padrao.match(matricula):
+                e.control.error_text = "Formato inválido. Use e00000 ou d00000"
+            else:
+                e.control.error_text = None
+            
+            e.control.update()
         
         matricula = ft.TextField(
             label="Matrícula",
-            width=400
-            )
+            width=400,
+            hint_text="Formato: e00000 ou d00000",
+            input_filter=ft.InputFilter(
+                allow=True,
+                regex_string=r"[edED0-9]",  # Permite apenas e, d, E, D e números
+                replacement_string=""
+            ),
+            max_length=6,
+            on_change=validar_matricula
+        )
         
         numCabo = ft.Dropdown(
             label="Número do Cabo",
             options=[ft.dropdown.Option(c) for c in get_cabos_disponiveis()],
             width=205
-            
         )
 
         def save_emprestimo(e):
+
+
             if not nome.value or not matricula.value or not numCabo.value:
                 page.snack_bar = ft.SnackBar(ft.Text("Preencha todos os campos!"))
                 page.snack_bar.open = True
@@ -80,7 +112,7 @@ def main(page: ft.Page):
             }
             
             emprestimos.append(novo_emprestimo)
-            save_emprestimos()  # Salva no arquivo JSON
+            save_emprestimos()
             
             t.value = f"Registrado: '{nome.value}' - Cabo '{numCabo.value}'"
             page.update()
@@ -135,7 +167,7 @@ def main(page: ft.Page):
                 if emprestimo["numCabo"] == num_cabo and emprestimo["status"] == "Ativo":
                     emprestimo["status"] = "Devolvido"
                     emprestimo["dataDevolucao"] = datetime.now().strftime("%d/%m/%Y %H:%M")
-                    save_emprestimos()  # Salva no arquivo JSON
+                    save_emprestimos()
                     break
                 
             page.snack_bar = ft.SnackBar(
@@ -237,24 +269,27 @@ def main(page: ft.Page):
         bgcolor= "#e02444",
         actions=[]
     )
+    
     rail = ft.NavigationRail(
         selected_index=0,
-        label_type= ft.NavigationRailLabelType.ALL,
+        label_type=ft.NavigationRailLabelType.ALL,
         min_width=250,
         min_extended_width=550,
         leading=ft.FloatingActionButton(
-            icon=ft.icons.CREATE, text="Novo Empréstimo", on_click=new_emprestimo
+            icon=ft.icons.CREATE_OUTLINED, 
+            text="Novo Empréstimo", 
+            on_click=new_emprestimo
         ),
         group_alignment=-0.9,
         destinations=[
             ft.NavigationRailDestination(
-                icon=ft.icons.SYNC_ROUNDED,
-                selected_icon=icons.SYNC_ROUNDED,
+                icon=ft.icons.SYNC_OUTLINED,
+                selected_icon=ft.icons.SYNC_OUTLINED,
                 label="Devolução Empréstimo",
             ),
             ft.NavigationRailDestination(
-                icon=icons.HISTORY_EDU_ROUNDED,
-                selected_icon=icons.HISTORY_EDU,
+                icon=ft.icons.HISTORY_OUTLINED,
+                selected_icon=ft.icons.HISTORY_OUTLINED,
                 label="Historico Empréstimos",
             ),
         ],
