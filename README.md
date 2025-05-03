@@ -2,7 +2,7 @@
 
 **Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
 
-![Dom Helder Logo](Logo Dom Helder.png)
+![Dom Helder Logo](LogoDomHelder.png)
 
 
 ![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
