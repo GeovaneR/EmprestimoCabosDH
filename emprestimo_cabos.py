@@ -3,7 +3,7 @@ from flet import *
 from datetime import datetime
 import json
 import os
-import re 
+import re
 
 JSON_FILE = "emprestimos.json"
 
@@ -25,7 +25,7 @@ def main(page: ft.Page):
 
     def update_body(content):
         body_content.controls.clear()
-        body_content.controls.append(content)  
+        body_content.controls.append(content)
         page.update()
 
     def get_cabos_disponiveis():
@@ -38,32 +38,26 @@ def main(page: ft.Page):
             label="Nome",
             width=400
         )
-        
+
         def validar_matricula(e):
-            # Permite apagar (backspace)
-            if e.control.value == "":
-                e.control.error_text = None
-                e.control.update()
-                return
-            
-            # Converte a primeira letra para minúscula
+
             if len(e.control.value) > 0 and e.control.value[0].isalpha():
                 current_value = e.control.value
                 new_value = current_value[0].lower() + current_value[1:]
                 if new_value != current_value:
                     e.control.value = new_value
-            
-            # Valida o formato
+                    e.control.update()
+                    
             matricula = e.control.value
-            padrao = re.compile(r'^[ed]\d{0,5}$')  # Permite digitação parcial
-            
+            padrao = re.compile(r'^[ed]\d{0,5}$')
+
             if not padrao.match(matricula):
                 e.control.error_text = "Formato inválido. Use e00000 ou d00000"
             else:
                 e.control.error_text = None
-            
+
             e.control.update()
-        
+
         matricula = ft.TextField(
             label="Matrícula",
             width=400,
@@ -76,7 +70,7 @@ def main(page: ft.Page):
             max_length=6,
             on_change=validar_matricula
         )
-        
+
         numCabo = ft.Dropdown(
             label="Número do Cabo",
             options=[ft.dropdown.Option(c) for c in get_cabos_disponiveis()],
@@ -84,8 +78,6 @@ def main(page: ft.Page):
         )
 
         def save_emprestimo(e):
-
-
             if not nome.value or not matricula.value or not numCabo.value:
                 page.snack_bar = ft.SnackBar(ft.Text("Preencha todos os campos!"))
                 page.snack_bar.open = True
@@ -93,10 +85,10 @@ def main(page: ft.Page):
                 return
 
             cabo_emprestado = any(
-                e["numCabo"] == numCabo.value and e["status"] == "Ativo" 
+                e["numCabo"] == numCabo.value and e["status"] == "Ativo"
                 for e in emprestimos
             )
-    
+
             if cabo_emprestado:
                 page.snack_bar = ft.SnackBar(ft.Text(f"Erro: O cabo {numCabo.value} já está emprestado!"))
                 page.snack_bar.open = True
@@ -110,10 +102,10 @@ def main(page: ft.Page):
                 "data": datetime.now().strftime("%d/%m/%Y %H:%M"),
                 "status": "Ativo"
             }
-            
+
             emprestimos.append(novo_emprestimo)
             save_emprestimos()
-            
+
             t.value = f"Registrado: '{nome.value}' - Cabo '{numCabo.value}'"
             page.update()
 
@@ -160,16 +152,16 @@ def main(page: ft.Page):
                 page.snack_bar.open = True
                 page.update()
                 return
-            
+
             num_cabo = selected.split(" - ")[0]
-            
+
             for emprestimo in emprestimos:
                 if emprestimo["numCabo"] == num_cabo and emprestimo["status"] == "Ativo":
                     emprestimo["status"] = "Devolvido"
                     emprestimo["dataDevolucao"] = datetime.now().strftime("%d/%m/%Y %H:%M")
                     save_emprestimos()
                     break
-                
+
             page.snack_bar = ft.SnackBar(
                 content=ft.Text(f"Cabo {num_cabo} devolvido com sucesso!"),
                 behavior=ft.SnackBarBehavior.FLOATING,
@@ -195,7 +187,7 @@ def main(page: ft.Page):
                 spacing=15
             )
         )
-        
+
     def historico_emprestimo(e):
         rows = []
         current_row = ft.Row(spacing=20, wrap=True)
@@ -211,7 +203,7 @@ def main(page: ft.Page):
                 )
             )
             return
-        
+
         for i, emprestimo in enumerate(emprestimos):
             card = ft.Card(
                 content=ft.Container(
@@ -232,13 +224,13 @@ def main(page: ft.Page):
                     width=300
                 )
             )
-            
+
             current_row.controls.append(card)
-            
+
             if (i + 1) % 3 == 0:
                 rows.append(current_row)
                 current_row = ft.Row(spacing=20, wrap=True)
-        
+
         if current_row.controls:
             rows.append(current_row)
 
@@ -252,7 +244,7 @@ def main(page: ft.Page):
                 scroll="auto"
             )
         )
-    
+
     def opcoes(e):
         if e.control.selected_index == 0:
             devolucao_emprestimo(e)
@@ -266,18 +258,18 @@ def main(page: ft.Page):
         ),
         title=ft.Text("Empréstimo Cabos DH", color=ft.Colors.WHITE),
         center_title=True,
-        bgcolor= "#e02444",
+        bgcolor="#e02444",
         actions=[]
     )
-    
+
     rail = ft.NavigationRail(
         selected_index=0,
         label_type=ft.NavigationRailLabelType.ALL,
         min_width=250,
         min_extended_width=550,
         leading=ft.FloatingActionButton(
-            icon=ft.icons.CREATE_OUTLINED, 
-            text="Novo Empréstimo", 
+            icon=ft.icons.CREATE_OUTLINED,
+            text="Novo Empréstimo",
             on_click=new_emprestimo
         ),
         group_alignment=-0.9,
@@ -297,7 +289,7 @@ def main(page: ft.Page):
     )
 
     body_content = ft.Column([ft.Text("Selecione uma opção no menu!")], expand=True)
-        
+
     page.add(
         ft.Row(
             [
