@@ -1,0 +1,17 @@
+[
+    {
+        "nome": "GEOVANE",
+        "matricula": "D1902",
+        "numCabo": "1",
+        "data": "02/05/2025 22:08",
+        "status": "Devolvido",
+        "dataDevolucao": "02/05/2025 22:09"
+    },
+    {
+        "nome": "1212",
+        "matricula": "1212",
+        "numCabo": "2",
+        "data": "02/05/2025 22:09",
+        "status": "Ativo"
+    }
+]
