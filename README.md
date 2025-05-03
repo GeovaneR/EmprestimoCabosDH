@@ -2,7 +2,7 @@
 
 **Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
 
-![Dom Helder Logo](https://www.domhelder.edu.br/wp-content/themes/domhelder/images/logo.png)
+![Dom Helder Logo](Logo.png)
 ![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
 ![Flet](https://img.shields.io/badge/Flet-0.1.4-green)
 
@@ -11,7 +11,7 @@
 Sistema desenvolvido para o controle de empréstimos de cabos para alunos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
 
 **Orientador:** Yury Nery Ryan  
-**Estagiário:** Geovane Soares Ramos 
+**Estagiário:** Geovane Soares Ramos
 **Período:** [30/04/2025] - [03/05/2025]
 
 ## 🚀 Como Executar
