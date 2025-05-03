@@ -3,9 +3,10 @@
 
 **Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
 
-![Dom Helder Logo]()
-![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
-![Flet](https://img.shields.io/badge/Flet-0.1.4-green)
+![Dom Helder Logo](Logo.png)
+
+<img src="https://img.shields.io/badge/Python-3.7%2B-blue" alt="Python"> 
+<img src="https://img.shields.io/badge/Flet-0.1.4-green" alt="Flet">
 
 ## 📋 Sobre o Projeto
 Sistema desenvolvido para o controle de empréstimos de cabos e equipamentos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
