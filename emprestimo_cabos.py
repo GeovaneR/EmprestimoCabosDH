@@ -1,9 +1,10 @@
 import flet as ft
 from flet import *
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 import re
+import time
 
 JSON_FILE = "emprestimos.json"
 
@@ -23,6 +24,37 @@ def main(page: ft.Page):
     emprestimos = load_emprestimos()
     cabos = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
+    def check_emprestimos_expirados():
+        alertas_mostrados = set()  
+        
+        while True:
+            time.sleep(60)
+            now = datetime.now()
+            
+            for emprestimo in emprestimos:
+                if emprestimo["status"] == "Ativo":
+                    emprestimo_id = f"{emprestimo['numCabo']}-{emprestimo['data']}"
+                    
+                    data_emprestimo = datetime.strptime(emprestimo["data"], "%d/%m/%Y %H:%M")
+                    tempo_decorrido = now - data_emprestimo
+                    
+                    if tempo_decorrido.total_seconds() >= 1800 and emprestimo_id not in alertas_mostrados:
+
+                        alertas_mostrados.add(emprestimo_id)
+                        
+                        dlg = ft.AlertDialog(
+                            title=ft.Text("Alerta de Empréstimo"),
+                            content=ft.Text(f"ATENÇÃO: O tempo de empréstimo do cabo {emprestimo['numCabo']} - {emprestimo['nome']} expirou!"),
+                            on_dismiss=lambda e: print("Alerta fechado"),
+                        )
+
+                        page.open(dlg)
+                        page.update()
+                        
+    # Inicia a thread de verificação em segundo plano
+    import threading
+    threading.Thread(target=check_emprestimos_expirados, daemon=True).start()
+
     def update_body(content):
         body_content.controls.clear()
         body_content.controls.append(content)
@@ -36,7 +68,9 @@ def main(page: ft.Page):
         t = ft.Text()
         nome = ft.TextField(
             label="Nome",
-            width=400
+            width=400,
+            autofocus=True,
+            hint_text="Nome",
         )
 
         def validar_matricula(e):
@@ -47,12 +81,12 @@ def main(page: ft.Page):
                 if new_value != current_value:
                     e.control.value = new_value
                     e.control.update()
-                    
+
             matricula = e.control.value
-            padrao = re.compile(r'^[ed]\d{0,5}$')
+            padrao = re.compile(r'^[ed]\d{5}$')
 
             if not padrao.match(matricula):
-                e.control.error_text = "Formato inválido. Use e00000 ou d00000"
+                e.control.error_text = "Formato inválido. Use e12345 ou d56789 (5 dígitos)"
             else:
                 e.control.error_text = None
 
@@ -61,26 +95,26 @@ def main(page: ft.Page):
         matricula = ft.TextField(
             label="Matrícula",
             width=400,
-            hint_text="Formato: e00000 ou d00000",
+            hint_text="Exemplo: e12345 ou d54321",
             input_filter=ft.InputFilter(
                 allow=True,
-                regex_string=r"[edED0-9]",  # Permite apenas e, d, E, D e números
+                regex_string=r"[edED0-9]",
                 replacement_string=""
             ),
             max_length=6,
-            on_change=validar_matricula
+            on_change=validar_matricula,
+            capitalization=ft.TextCapitalization.CHARACTERS,
         )
 
         numCabo = ft.Dropdown(
-            label="Número do Cabo",
+            label="Código do Cabo",
             options=[ft.dropdown.Option(c) for c in get_cabos_disponiveis()],
             width=205
         )
 
         def save_emprestimo(e):
             if not nome.value or not matricula.value or not numCabo.value:
-                page.snack_bar = ft.SnackBar(ft.Text("Preencha todos os campos!"))
-                page.snack_bar.open = True
+                page.open(ft.SnackBar(ft.Text("Preencha todos os campos!", text_align="center")))
                 page.update()
                 return
 
@@ -90,8 +124,7 @@ def main(page: ft.Page):
             )
 
             if cabo_emprestado:
-                page.snack_bar = ft.SnackBar(ft.Text(f"Erro: O cabo {numCabo.value} já está emprestado!"))
-                page.snack_bar.open = True
+                page.open(ft.SnackBar(ft.Text(f"Erro: O cabo {numCabo.value} já está emprestado!", text_align="center")))
                 page.update()
                 return
 
@@ -148,8 +181,7 @@ def main(page: ft.Page):
         def confirm_devolucao(e):
             selected = selection_cabos.value
             if not selected:
-                page.snack_bar = ft.SnackBar(ft.Text("Selecione um cabo para devolução!"))
-                page.snack_bar.open = True
+                page.open(ft.SnackBar(ft.Text("Selecione um cabo para devolução!", text_align="center")))
                 page.update()
                 return
 
@@ -162,13 +194,7 @@ def main(page: ft.Page):
                     save_emprestimos()
                     break
 
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text(f"Cabo {num_cabo} devolvido com sucesso!"),
-                behavior=ft.SnackBarBehavior.FLOATING,
-                action="OK",
-                duration=3000
-            )
-            page.snack_bar.open = True
+            page.open(ft.SnackBar(ft.Text(f"Cabo {num_cabo} devolvido com sucesso!", text_align="center")))
             page.update()
             devolucao_emprestimo(e)
 
@@ -205,6 +231,11 @@ def main(page: ft.Page):
             return
 
         for i, emprestimo in enumerate(emprestimos):
+            # Verifica se o empréstimo está expirado mas ainda ativo
+            data_emprestimo = datetime.strptime(emprestimo["data"], "%d/%m/%Y %H:%M")
+            tempo_decorrido = datetime.now() - data_emprestimo
+            expirado = tempo_decorrido.total_seconds() >= 1800 and emprestimo["status"] == "Ativo"
+            
             card = ft.Card(
                 content=ft.Container(
                     content=ft.Column(
@@ -215,8 +246,8 @@ def main(page: ft.Page):
                             ft.Text(f'Empréstimo: {emprestimo["data"]}'),
                             ft.Text(f'Devolução: {emprestimo.get("dataDevolucao", "Não devolvido")}'),
                             ft.Text(
-                                f'Status: {emprestimo["status"]}',
-                                color="green" if emprestimo['status'] == "Ativo" else "red"
+                                f'Status: {emprestimo["status"]}' + (" (Expirado)" if expirado else ""),
+                                color="orange" if expirado else ("green" if emprestimo['status'] == "Ativo" else "red")
                             )
                         ],
                     ),
@@ -300,5 +331,6 @@ def main(page: ft.Page):
             expand=True,
         )
     )
+    
 
 ft.app(target=main)
