@@ -11,7 +11,7 @@ from typing import List, Dict, Optional, Set
 # ===== CONSTANTES =====
 JSON_FILE = "emprestimos.json"
 CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8"]
-TEMPO_EMPRESTIMO_EXPIRADO = 10  # 30 minutos em segundos
+TEMPO_EMPRESTIMO_EXPIRADO = 1800  # 30 minutos em segundos
 
 # ===== FUNÇÕES DE DADOS =====
 def carregar_emprestimos() -> List[Dict]:
@@ -56,7 +56,7 @@ def verificar_emprestimos_expirados(page: ft.Page, emprestimos: List[Dict], stop
     """Verifica empréstimos expirados em segundo plano."""
     alertas_mostrados: Set[str] = set()
     while not stop_event.is_set():
-        time.sleep(60)  # Verifica a cada 1 minuto
+        time.sleep(30)  # Verifica a cada 30 segundos
         for emprestimo in emprestimos:
             if emprestimo_expirado(emprestimo):
                 id_emprestimo = f"{emprestimo['numCabo']}-{emprestimo['data']}"
