@@ -1,3 +1,74 @@
 [
-
+    {
+        "nome": "Geovane",
+        "matricula": "e01920",
+        "numCabo": "1",
+        "data": "11/05/2025 19:05",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 19:16"
+    },
+    {
+        "nome": "e0190222",
+        "matricula": "e11111",
+        "numCabo": "3",
+        "data": "11/05/2025 19:05",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 19:05"
+    },
+    {
+        "nome": "11",
+        "matricula": "e12121",
+        "numCabo": "2",
+        "data": "11/05/2025 19:12",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 19:16"
+    },
+    {
+        "nome": "e01902",
+        "matricula": "d12344",
+        "numCabo": "3",
+        "data": "11/05/2025 19:16",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 19:51"
+    },
+    {
+        "nome": "e",
+        "matricula": "e12111",
+        "numCabo": "1",
+        "data": "11/05/2025 19:32",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 19:51"
+    },
+    {
+        "nome": "e01902",
+        "matricula": "e11111",
+        "numCabo": "1",
+        "data": "11/05/2025 19:51",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 20:24"
+    },
+    {
+        "nome": "1",
+        "matricula": "e11111",
+        "numCabo": "2",
+        "data": "11/05/2025 20:10",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 20:24"
+    },
+    {
+        "nome": "1",
+        "matricula": "e11111",
+        "numCabo": "3",
+        "data": "11/05/2025 20:10",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 20:24"
+    },
+    {
+        "nome": "1",
+        "matricula": "e11111",
+        "numCabo": "4",
+        "data": "11/05/2025 20:10",
+        "status": "Devolvido",
+        "dataDevolucao": "11/05/2025 20:24"
+    }
 ]

@@ -12,7 +12,7 @@
 
 Sistema desenvolvido para o controle de empréstimos de cabos para alunos na Dom Helder Centro Universitário, como parte das atividades de estágio supervisionado.
 
-**Orientador:** Yury Nery Ryan  
+**Orientador:** Yury Rhaian Nery 
 **Estagiário:** Geovane Soares Ramos
 
 **Período:** 30/04/2025 - 03/05/2025
