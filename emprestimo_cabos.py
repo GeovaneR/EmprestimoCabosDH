@@ -12,7 +12,7 @@ from typing import List, Dict, Optional, Set
 JSON_FILE = "emprestimos.json"
 CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 TEMPO_EMPRESTIMO_EXPIRADO = 1800  # 30 minutos em segundos
-SENHA_ADMIN = "Dom123456"  # Senha para exclusão de registros
+SENHA_ADMIN = "Dom123"  # Senha para exclusão de registros
 
 # ===== FUNÇÕES DE DADOS =====
 def carregar_emprestimos() -> List[Dict]:

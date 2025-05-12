@@ -2,8 +2,6 @@
 
 **Sistema desenvolvido como parte das atividades de estágio na Dom Helder Centro Universitário**
 
-![Dom Helder Logo](LogoDomHelder.png)
-
 
 ![Python](https://img.shields.io/badge/Python-3.7%2B-blue)
 ![Flet](https://img.shields.io/badge/Flet-0.1.4-green)
