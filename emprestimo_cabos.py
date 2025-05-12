@@ -10,7 +10,7 @@ from typing import List, Dict, Optional, Set
 
 # ===== CONSTANTES =====
 JSON_FILE = "emprestimos.json"
-CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8"]
+CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 TEMPO_EMPRESTIMO_EXPIRADO = 1800  # 30 minutos em segundos
 
 # ===== FUNÇÕES DE DADOS =====
@@ -142,6 +142,11 @@ def mostrar_tela_novo_emprestimo(e, page: ft.Page, emprestimos: List[Dict], body
             page.open(ft.SnackBar(ft.Text("Matrícula inválida!",text_align="center")))
             page.update()
             return
+        
+        if num_cabo.value not in cabos_disponiveis(emprestimos):
+            page.open(ft.SnackBar(ft.Text("Cabo já emprestado!", text_align="center")))
+            page.update()
+            return
 
         novo_emprestimo = {
             "nome": nome.value,
@@ -217,52 +222,136 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
         ]
         page.update()
         return
+    
+    filter_nome = ft.TextField(label="Nome")
+    filter_matricula = ft.TextField(
+        label="Matrícula",
+        width=400,
+        hint_text="Ex: e12345 ou d54321",
+        input_filter=ft.InputFilter(allow=True, regex_string=r"[edED0-9]|[\b\u007F]", replacement_string=""),
+        max_length=6,
+    )
+    filter_numCabo = ft.Dropdown(
+        label="Código do Cabo", 
+        options=[ft.dropdown.Option(c) for c in CABOS_DISPONIVEIS], 
+        width=205
+    )
+    filter_status = ft.Dropdown( 
+        label="Filtrar por status",
+        options=[ft.dropdown.Option(s) for s in ["Todos", "Ativo", "Devolvido", "Expirado"]],
+        value="Todos",
+        width=300
+    )                            
 
-    # Cria os cartões organizados em linhas de 3
-    cards = []
-    current_row = ft.Row(spacing=20, wrap=True)  # Quebra automaticamente em várias linhas
+    cards_container = ft.Column(scroll="auto", expand=True)
+    
+    def filtrar_emprestimos(e):
+        """Aplica os filtros e atualiza os cartões."""
+        termo_nome = filter_nome.value.lower() if filter_nome.value else ""
+        termo_matricula = filter_matricula.value.lower() if filter_matricula.value else ""
+        termo_cabo = filter_numCabo.value if filter_numCabo.value else ""
+        status_selecionado = filter_status.value
 
-    for i, emprestimo in enumerate(emprestimos):
-        expirado = emprestimo_expirado(emprestimo)
-        card = ft.Card(
-            content=ft.Container(
-                content=ft.Column([
-                    ft.Text(f"Nome: {emprestimo['nome']}"),
-                    ft.Text(f"Matrícula: {emprestimo['matricula']}"),
-                    ft.Text(f"Cabo: {emprestimo['numCabo']}"),
-                    ft.Text(f"Data: {emprestimo['data']}"),
-                    ft.Text(f"Devolução: {emprestimo.get('dataDevolucao', 'Pendente')}"),
-                    ft.Text(
-                        f"Status: {emprestimo['status']}" + (" (Expirado)" if expirado else ""),
-                        color="orange" if expirado else ("green" if emprestimo['status'] == "Ativo" else "red"),
-                    ),
-                ]),
-                margin=10,
-                padding=10,
-                width=300,  # Largura fixa para cada card
+        if filter_matricula.value and not validar_matricula(filter_matricula.value):
+            page.open(ft.SnackBar(ft.Text("Matrícula inválida no filtro!", text_align="center")))
+            page.update()
+            return
+
+        # Filtra os empréstimos
+        emprestimos_filtrados = []
+        for emp in emprestimos:
+            nome_match = termo_nome in emp["nome"].lower()
+            matricula_match = termo_matricula in emp["matricula"].lower()
+            numCabo_match = (termo_cabo == emp["numCabo"]) if termo_cabo else True
+
+            # Verifica filtro de status
+            status_match = True
+            if status_selecionado == "Ativo":
+                status_match = emp["status"] == "Ativo"
+            elif status_selecionado == "Devolvido":
+                status_match = emp["status"] == "Devolvido"
+            elif status_selecionado == "Expirado":
+                status_match = emprestimo_expirado(emp)
+            
+            if nome_match and matricula_match and numCabo_match and status_match:
+                emprestimos_filtrados.append(emp)
+
+        # Limpa o container
+        cards_container.controls.clear()
+        
+        # Cria os cartões organizados em linhas de 3
+        current_row = ft.Row(spacing=20, wrap=True)
+        
+        for i, emprestimo in enumerate(emprestimos_filtrados):
+            expirado = emprestimo_expirado(emprestimo)
+            card = ft.Card(
+                content=ft.Container(
+                    content=ft.Column([
+                        ft.Text(f"Nome: {emprestimo['nome']}"),
+                        ft.Text(f"Matrícula: {emprestimo['matricula']}"),
+                        ft.Text(f"Cabo: {emprestimo['numCabo']}"),
+                        ft.Text(f"Data: {emprestimo['data']}"),
+                        ft.Text(f"Devolução: {emprestimo.get('dataDevolucao', 'Pendente')}"),
+                        ft.Text(
+                            f"Status: {emprestimo['status']}" + (" (Expirado)" if expirado else ""),
+                            color="orange" if expirado else ("green" if emprestimo['status'] == "Ativo" else "red"),
+                        ),
+                    ]),
+                    margin=10,
+                    padding=10,
+                    width=300,
+                )
             )
-        )
 
-        current_row.controls.append(card)
+            current_row.controls.append(card)
 
-        # Quebra a linha a cada 3 cards
-        if (i + 1) % 3 == 0:
-            cards.append(current_row)
-            current_row = ft.Row(spacing=20, wrap=True)
+            # Quebra a linha a cada 3 cards
+            if (i + 1) % 4 == 0:
+                cards_container.controls.append(current_row)
+                current_row = ft.Row(spacing=20, wrap=True)
 
-    # Adiciona a última linha (se não estiver completa)
-    if current_row.controls:
-        cards.append(current_row)
+        # Adiciona a última linha (se não estiver completa)
+        if current_row.controls:
+            cards_container.controls.append(current_row)
+            
+        # Mostra mensagem se nenhum resultado for encontrado
+        if not emprestimos_filtrados:
+            cards_container.controls.append(
+                ft.Text("Nenhum empréstimo encontrado com os filtros aplicados.", color="red")
+            )
+            
+        page.update()
 
-    # Adiciona scroll à coluna principal
+    # Configura a interface inicial
     body_content.controls = [
         ft.Text("Histórico de Empréstimos", size=20, weight="bold"),
-        ft.Column(
-            controls=cards,
-            scroll="auto",  # Habilita a rolagem
-            expand=True,    # Ocupa todo o espaço vertical
+        ft.Row(
+            controls=[
+                filter_nome,
+                filter_matricula,
+                filter_numCabo, 
+                filter_status, 
+                ft.ElevatedButton(
+                    "Buscar", 
+                    on_click=filtrar_emprestimos,  # Corrigido para chamar a função
+                    color="white", 
+                    icon=ft.icons.SEARCH,
+                    icon_color="white",
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=5),
+                        text_style=ft.TextStyle(size=15, weight="bold")
+                    ), 
+                    width=150, 
+                    height=50, 
+                    bgcolor="#e02444",
+                ),
+            ],    
         ),
+        cards_container,
     ]
+    
+    # Aplica os filtros inicialmente (mostra tudo)
+    filtrar_emprestimos(None)
     page.update()
 
 
