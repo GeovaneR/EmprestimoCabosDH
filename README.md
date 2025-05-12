@@ -38,7 +38,7 @@ python emprestimo_cabos.py
 
 ### ✨ Novo Empréstimo
 - Cadastro de alunos com nome e matrícula
-- Seleção de cabos disponíveis (1-8)
+- Seleção de cabos disponíveis (1-9)
 - Registro automático de data e hora
 
 ### 🔄 Devolução
@@ -50,6 +50,8 @@ python emprestimo_cabos.py
 - Visualização de todos os empréstimos realizados
 - Status visual por cores (ativo/devolvido)
 - Informações completas de cada transação
+- Filtragem de empréstimos específicos por nome, matrícula ou número do cabo
+- Permite remover empréstimos mediante autenticação por senha de administrador
 
 ## 🗃️ Estrutura de Dados
 
@@ -73,7 +75,7 @@ Os parâmetros estão ajustados para atender às normas da Dom Helder:
 ```python
 # Configurações específicas Dom Helder
 COR_PRIMARIA = "#e02444"  # Vermelho institucional
-CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8"]
+CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 ```
 
 ## 📌 Termos de Uso
