@@ -12,6 +12,7 @@ from typing import List, Dict, Optional, Set
 JSON_FILE = "emprestimos.json"
 CABOS_DISPONIVEIS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 TEMPO_EMPRESTIMO_EXPIRADO = 1800  # 30 minutos em segundos
+SENHA_ADMIN = "Dom123456"  # Senha para exclusão de registros
 
 # ===== FUNÇÕES DE DADOS =====
 def carregar_emprestimos() -> List[Dict]:
@@ -91,14 +92,14 @@ def criar_navigation_rail(on_nav_change, page: ft.Page, emprestimos: List[Dict],
         min_width=250,
         min_extended_width=550,
         leading=ft.FloatingActionButton(
-            icon=ft.icons.CREATE_OUTLINED,
+            icon=ft.Icons.CREATE_OUTLINED,
             text="Novo Empréstimo",
             on_click=lambda e: mostrar_tela_novo_emprestimo(e, page, emprestimos, body_content),
         ),
         group_alignment=-0.9,
         destinations=[
-            ft.NavigationRailDestination(icon=ft.icons.SYNC_OUTLINED, label="Devolução"),
-            ft.NavigationRailDestination(icon=ft.icons.HISTORY_OUTLINED, label="Histórico"),
+            ft.NavigationRailDestination(icon=ft.Icons.SYNC_OUTLINED, label="Devolução"),
+            ft.NavigationRailDestination(icon=ft.Icons.HISTORY_OUTLINED, label="Histórico"),
         ],
         on_change=on_nav_change,
     )
@@ -244,8 +245,45 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
     )                            
 
     cards_container = ft.Column(scroll="auto", expand=True)
-    
-    def filtrar_emprestimos(e):
+
+    senha_input = ft.TextField(
+        label="Digite a senha de administrador",
+        password=True,
+        width=400,
+    )
+
+    def excluir_emprestimo(emprestimo):
+        """Exclui um empréstimo."""
+        senha_input.value = ""
+        senha_input.error_text = None
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("Excluir Empréstimo"),
+            content=senha_input,
+            actions=[
+                ft.ElevatedButton("Confirmar", on_click=lambda e: verificar_senha(e, emprestimo, dlg)),
+                ft.ElevatedButton("Cancelar", on_click=lambda _: page.close(dlg)),
+            ],
+        )
+        page.open(dlg)
+        page.update()
+
+    def verificar_senha(e, emprestimo, dlg):
+        if senha_input.value == SENHA_ADMIN:
+            emprestimos.remove(emprestimo)
+            salvar_emprestimos(emprestimos)
+            page.open(ft.SnackBar(ft.Text("Empréstimo excluído com sucesso!", text_align="center")))
+            page.close(dlg)  # Fecha o dialog de senha
+            filtrar_emprestimos(None)  # Atualiza a tela imediatamente
+            page.update()
+        else:
+            senha_input.error_text = "Senha incorreta!"
+            senha_input.update()
+            page.open(ft.SnackBar(ft.Text("Senha incorreta!", text_align="center")))
+            page.update()
+            
+
+    def filtrar_emprestimos(dlg):
         """Aplica os filtros e atualiza os cartões."""
         termo_nome = filter_nome.value.lower() if filter_nome.value else ""
         termo_matricula = filter_matricula.value.lower() if filter_matricula.value else ""
@@ -287,7 +325,18 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
             card = ft.Card(
                 content=ft.Container(
                     content=ft.Column([
-                        ft.Text(f"Nome: {emprestimo['nome']}"),
+                        ft.Row(
+                            [
+                                ft.Text(f"Nome: {emprestimo['nome']}"),
+                                ft.IconButton(
+                                    icon=ft.Icons.DELETE,
+                                    tooltip="Delete emprestimo",
+                                    on_click=lambda e, emp=emprestimo: excluir_emprestimo(emp),
+                                    icon_color="red",
+                                ),
+                            ],
+                            alignment="spaceBetween",
+                        ),
                         ft.Text(f"Matrícula: {emprestimo['matricula']}"),
                         ft.Text(f"Cabo: {emprestimo['numCabo']}"),
                         ft.Text(f"Data: {emprestimo['data']}"),
@@ -322,6 +371,17 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
             
         page.update()
 
+    def limpar_filtros(e):
+        filter_nome.value = ""
+        filter_matricula.value = ""
+        filter_numCabo.value = ""
+        filter_status.value = "Todos"
+        filter_nome.update()
+        filter_matricula.update()
+        filter_numCabo.update()
+        filter_status.update()
+        filtrar_emprestimos(None)
+
     # Configura a interface inicial
     body_content.controls = [
         ft.Text("Histórico de Empréstimos", size=20, weight="bold"),
@@ -335,7 +395,7 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
                     "Buscar", 
                     on_click=filtrar_emprestimos,  # Corrigido para chamar a função
                     color="white", 
-                    icon=ft.icons.SEARCH,
+                    icon=ft.Icons.SEARCH,
                     icon_color="white",
                     style=ft.ButtonStyle(
                         shape=ft.RoundedRectangleBorder(radius=5),
@@ -344,6 +404,20 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
                     width=150, 
                     height=50, 
                     bgcolor="#e02444",
+                ),
+                ft.ElevatedButton(
+                    "Limpar",
+                    on_click=limpar_filtros,
+                    color="white",
+                    icon=ft.Icons.CLEAR,
+                    icon_color="white",
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=5),
+                        text_style=ft.TextStyle(size=15, weight="bold")
+                    ),
+                    width=150,
+                    height=50,
+                    bgcolor="#888888",
                 ),
             ],    
         ),
