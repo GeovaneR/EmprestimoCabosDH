@@ -1,12 +1,12 @@
 import flet as ft
 from flet import *
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import os
 import re
 import time
 import threading
-from typing import List, Dict, Optional, Set
+from typing import List, Dict, Set
 
 # ===== CONSTANTES =====
 JSON_FILE = "emprestimos.json"
@@ -283,7 +283,7 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
             page.update()
             
 
-    def filtrar_emprestimos(dlg):
+    def filtrar_emprestimos():
         """Aplica os filtros e atualiza os cartões."""
         termo_nome = filter_nome.value.lower() if filter_nome.value else ""
         termo_matricula = filter_matricula.value.lower() if filter_matricula.value else ""
@@ -313,6 +313,17 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
             
             if nome_match and matricula_match and numCabo_match and status_match:
                 emprestimos_filtrados.append(emp)
+
+        # Ordena: Ativos primeiro, depois Expirados, depois Devolvidos
+        def status_priority(emp):
+            if emprestimo_expirado(emp):
+                return 1  # Expirado
+            elif emp['status'] == 'Ativo':
+                return 0  # Ativo
+            elif emp['status'] == 'Devolvido':
+                return 2  # Devolvido
+
+        emprestimos_filtrados.sort(key=status_priority)
 
         # Limpa o container
         cards_container.controls.clear()
@@ -355,7 +366,7 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
             current_row.controls.append(card)
 
             # Quebra a linha a cada 3 cards
-            if (i + 1) % 4 == 0:
+            if (i + 1) %  3 == 0:
                 cards_container.controls.append(current_row)
                 current_row = ft.Row(spacing=20, wrap=True)
 
@@ -390,7 +401,12 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
                 filter_nome,
                 filter_matricula,
                 filter_numCabo, 
-                filter_status, 
+                
+            ]
+        ), 
+        ft.Row(
+            controls=[
+                filter_status,
                 ft.ElevatedButton(
                     "Buscar", 
                     on_click=filtrar_emprestimos,  # Corrigido para chamar a função
@@ -433,8 +449,7 @@ def mostrar_tela_historico(e, page: ft.Page, emprestimos: List[Dict], body_conte
 def main(page: ft.Page):
     page.title = "Empréstimo de Cabos"
     emprestimos = carregar_emprestimos()
-    page.window.maximized = True  
-    page.window.width = 1350
+
 
     # Thread para verificar empréstimos expirados
     stop_event = threading.Event()
